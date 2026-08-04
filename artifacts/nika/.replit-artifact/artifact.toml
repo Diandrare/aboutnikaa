@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "nika — about"
+description = "A personal about page for 'nika' — a dark, minimal single-page site with JetBrains Mono font, animated GIF background, avatar, bio, social links, YouTube music player, rotating typewriter quotes, and a loading screen with full-visuals vs lite mode toggle."
+version = "1.0.0"
+id = "artifacts/nika"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18731
+
+[services.development]
+run = "pnpm --filter @workspace/nika run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/nika", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/nika/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18731"
+BASE_PATH = "/"

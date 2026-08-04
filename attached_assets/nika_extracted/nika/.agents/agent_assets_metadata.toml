@@ -1,0 +1,9 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "kRCuQOn4azqoYUuuEVYpl"
+uri = "file://nika-about-infinityfree.zip"
+type = "unspecified"
+title = "nika-about (InfinityFree)"
+description = "Upload semua isi zip ini ke folder htdocs di InfinityFree"
