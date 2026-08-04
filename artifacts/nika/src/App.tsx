@@ -202,7 +202,7 @@ function MusicPlayer() {
 /* ───────── Glitch Star Transition ───────── */
 const GLITCH_CYCLE = 4200; // ms — one full star → dissolve cycle
 
-function GlitchStar({ onDone }: { onDone: () => void }) {
+function GlitchStar({ onDone, mode }: { onDone: () => void; mode: "performance" | "lite" }) {
   useEffect(() => {
     const t = setTimeout(onDone, GLITCH_CYCLE);
     return () => clearTimeout(t);
@@ -216,7 +216,6 @@ function GlitchStar({ onDone }: { onDone: () => void }) {
         zIndex: 999,
         display: "grid",
         placeItems: "center",
-        background: "radial-gradient(circle at center,rgba(255,255,255,.075),transparent 25%), #050507",
         overflow: "hidden",
       }}
     >
@@ -320,6 +319,29 @@ function GlitchStar({ onDone }: { onDone: () => void }) {
           animation:gs-noise .35s steps(2) infinite;
         }
       `}</style>
+
+      {/* blurred gif background (performance only) */}
+      {mode === "performance" && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: "url('/bg.gif')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(18px) brightness(0.35)",
+            transform: "scale(1.05)",
+          }}
+        />
+      )}
+      {/* radial vignette on top of gif */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "radial-gradient(circle at center,rgba(5,5,7,.45),rgba(5,5,7,.82) 70%)",
+        }}
+      />
 
       <div className="gs-noise" />
 
@@ -536,7 +558,7 @@ function Home() {
     setTransitioning(true);
   };
 
-  if (transitioning) return <GlitchStar onDone={() => setTransitioning(false)} />;
+  if (transitioning && mode) return <GlitchStar onDone={() => setTransitioning(false)} mode={mode} />;
   if (!mode) return <ModeSelect onSelect={handleSelect} />;
   return <MainPage mode={mode} />;
 }
