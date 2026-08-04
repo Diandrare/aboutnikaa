@@ -246,6 +246,7 @@ function ModeSelect({ onSelect }: { onSelect: (mode: "performance" | "lite") => 
 /* ───────── Main Page ───────── */
 function MainPage({ mode }: { mode: "performance" | "lite" }) {
   const isPerf = mode === "performance";
+  const idle = useIdleStatus();
 
   return (
     <div
@@ -320,8 +321,8 @@ function MainPage({ mode }: { mode: "performance" | "lite" }) {
           transition={{ delay: 0.7 }}
           className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-white/8 border border-white/12 mb-8"
         >
-          <span className="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_6px_#4ade80] animate-pulse" />
-          <span className="font-mono text-sm text-gray-200">currently: online</span>
+          <span className={`w-2 h-2 rounded-full ${idle ? "bg-yellow-400 shadow-[0_0_6px_#facc15]" : "bg-green-400 shadow-[0_0_6px_#4ade80]"} animate-pulse`} />
+          <span className="font-mono text-sm text-gray-200">currently: {idle ? "idle" : "online"}</span>
         </motion.div>
 
         {/* Music player */}
@@ -359,6 +360,32 @@ function MainPage({ mode }: { mode: "performance" | "lite" }) {
       </motion.div>
     </div>
   );
+}
+
+/* ───────── Idle status ───────── */
+function useIdleStatus(idleMs = 5500) {
+  const [idle, setIdle] = useState(false);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    const reset = () => {
+      setIdle(false);
+      clearTimeout(timer);
+      timer = setTimeout(() => setIdle(true), idleMs);
+    };
+
+    const events = ["mousemove", "mousedown", "keydown", "touchstart", "scroll"];
+    events.forEach((e) => window.addEventListener(e, reset, { passive: true }));
+    timer = setTimeout(() => setIdle(true), idleMs);
+
+    return () => {
+      clearTimeout(timer);
+      events.forEach((e) => window.removeEventListener(e, reset));
+    };
+  }, [idleMs]);
+
+  return idle;
 }
 
 /* ───────── Root ───────── */
