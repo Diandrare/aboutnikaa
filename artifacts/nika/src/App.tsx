@@ -199,6 +199,144 @@ function MusicPlayer() {
   );
 }
 
+/* ───────── Glitch Star Transition ───────── */
+const GLITCH_CYCLE = 4200; // ms — one full star → dissolve cycle
+
+function GlitchStar({ onDone }: { onDone: () => void }) {
+  useEffect(() => {
+    const t = setTimeout(onDone, GLITCH_CYCLE);
+    return () => clearTimeout(t);
+  }, [onDone]);
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 999,
+        display: "grid",
+        placeItems: "center",
+        background: "radial-gradient(circle at center,rgba(255,255,255,.075),transparent 25%), #050507",
+        overflow: "hidden",
+      }}
+    >
+      {/* film grain overlay */}
+      <style>{`
+        @keyframes gs-main{
+          0%{transform:translate3d(0,8px,0) scale(.94) rotate(-.6deg);opacity:0;filter:blur(8px) brightness(.8)}
+          8%{transform:translate3d(0,0,0) scale(1) rotate(0);opacity:1;filter:blur(0) brightness(1)}
+          30%{transform:translate3d(0,-2px,0) scale(1.015) rotate(.25deg);opacity:1;filter:blur(0) brightness(1.05)}
+          34%{transform:translate3d(-2px,1px,0) scale(1.01,.99) skewX(-1deg)}
+          36%{transform:translate3d(5px,-1px,0) scale(.99,1.015) skewX(3deg)}
+          38%{transform:translate3d(-7px,2px,0) scale(1.02,.98) skewX(-4deg)}
+          40%{transform:translate3d(3px,-1px,0) scale(.995,1.01) skewX(2deg)}
+          42%{transform:translate3d(-4px,0,0) scale(1.015,.985) skewX(-2deg)}
+          44%{transform:translate3d(2px,1px,0) scale(1.005,.995)}
+          47%{transform:translate3d(0,0,0) scale(1)}
+          53%{transform:translate3d(0,0,0) scaleX(1.08) scaleY(.92);filter:blur(.1px) brightness(1.2)}
+          61%{transform:translate3d(0,0,0) scaleX(1.8) scaleY(.34);filter:blur(.25px) brightness(1.55)}
+          69%{transform:translate3d(0,0,0) scaleX(2.7) scaleY(.075);filter:blur(.7px) brightness(2.1)}
+          76%{transform:translate3d(0,0,0) scaleX(3.35) scaleY(.018);opacity:.9;filter:blur(1.8px) brightness(2.7)}
+          84%{transform:translate3d(0,0,0) scaleX(4.15) scaleY(.006);opacity:.38;filter:blur(4px) brightness(2)}
+          92%,100%{transform:translate3d(0,0,0) scaleX(4.8) scaleY(.002);opacity:0;filter:blur(8px) brightness(1.4)}
+        }
+        @keyframes gs-cyan{
+          0%,32%,48%,100%{opacity:0;transform:translate(0,0)}
+          34%{opacity:.55;transform:translate(-5px,1px)}
+          36%{opacity:.18;transform:translate(3px,-1px)}
+          38%{opacity:.65;transform:translate(-8px,1px)}
+          40%{opacity:.1;transform:translate(2px,0)}
+          42%{opacity:.5;transform:translate(6px,-1px)}
+          44%{opacity:.12;transform:translate(-2px,1px)}
+          46%{opacity:0;transform:translate(0,0)}
+        }
+        @keyframes gs-pink{
+          0%,32%,48%,100%{opacity:0;transform:translate(0,0)}
+          34%{opacity:.5;transform:translate(5px,-1px)}
+          36%{opacity:.15;transform:translate(-3px,1px)}
+          38%{opacity:.6;transform:translate(8px,-1px)}
+          40%{opacity:.08;transform:translate(-2px,0)}
+          42%{opacity:.48;transform:translate(-6px,1px)}
+          44%{opacity:.1;transform:translate(2px,-1px)}
+          46%{opacity:0;transform:translate(0,0)}
+        }
+        @keyframes gs-beam{
+          0%,57%{width:0;opacity:0}
+          67%{width:42%;opacity:.25}
+          76%{width:76%;opacity:.9}
+          84%{width:92%;opacity:.3}
+          94%,100%{width:108%;opacity:0}
+        }
+        @keyframes gs-caption{
+          0%,10%{opacity:0;transform:translateY(8px)}
+          18%,46%{opacity:1;transform:translateY(0)}
+          60%,100%{opacity:0;transform:translateY(-5px)}
+        }
+        @keyframes gs-noise{
+          0%{transform:translate(0,0)}
+          25%{transform:translate(-1%,1%)}
+          50%{transform:translate(1%,-1%)}
+          75%{transform:translate(1%,1%)}
+          100%{transform:translate(0,0)}
+        }
+        .gs-shell{
+          width:clamp(140px,24vw,280px);
+          aspect-ratio:1;
+          position:relative;
+          transform-origin:center;
+          will-change:transform,opacity,filter;
+          animation:gs-main ${GLITCH_CYCLE}ms forwards;
+        }
+        .gs-star,.gs-ghost{
+          position:absolute;inset:0;
+          clip-path:polygon(50% 0%,58% 38%,100% 50%,58% 62%,50% 100%,42% 62%,0% 50%,42% 38%);
+        }
+        .gs-star{
+          background:white;
+          filter:drop-shadow(0 0 12px rgba(255,255,255,.65)) drop-shadow(0 0 42px rgba(255,255,255,.22));
+        }
+        .gs-ghost{opacity:0;mix-blend-mode:screen}
+        .gs-cyan{background:#37e9ff;animation:gs-cyan ${GLITCH_CYCLE}ms forwards}
+        .gs-pink{background:#ff3da6;animation:gs-pink ${GLITCH_CYCLE}ms forwards}
+        .gs-beam{
+          position:absolute;left:50%;top:50%;
+          width:0;height:2px;
+          transform:translate(-50%,-50%);
+          background:linear-gradient(90deg,transparent,white 40%,white 60%,transparent);
+          box-shadow:0 0 10px white,0 0 30px #78eaff;
+          opacity:0;
+          animation:gs-beam ${GLITCH_CYCLE}ms cubic-bezier(.22,.7,.2,1) forwards;
+        }
+        .gs-caption{
+          position:absolute;bottom:8%;
+          letter-spacing:.28em;text-transform:uppercase;
+          font-size:10px;font-family:monospace;
+          color:rgba(255,255,255,.4);
+          animation:gs-caption ${GLITCH_CYCLE}ms ease-in-out forwards;
+        }
+        .gs-noise{
+          position:absolute;inset:0;pointer-events:none;opacity:.045;
+          background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+          animation:gs-noise .35s steps(2) infinite;
+        }
+      `}</style>
+
+      <div className="gs-noise" />
+
+      {/* stage */}
+      <div style={{ width: "min(90vw,700px)", height: "min(80vh,620px)", display: "grid", placeItems: "center", position: "relative" }}>
+        <div className="gs-shell">
+          <div className="gs-ghost gs-cyan" />
+          <div className="gs-ghost gs-pink" />
+          <div className="gs-star" />
+        </div>
+        <div className="gs-beam" />
+        <div className="gs-caption">loading identity</div>
+      </div>
+    </div>
+  );
+}
+
 /* ───────── Mode Select (Loading) Screen ───────── */
 function ModeSelect({ onSelect }: { onSelect: (mode: "performance" | "lite") => void }) {
   return (
@@ -391,8 +529,15 @@ function useIdleStatus(idleMs = 5500) {
 /* ───────── Root ───────── */
 function Home() {
   const [mode, setMode] = useState<null | "performance" | "lite">(null);
+  const [transitioning, setTransitioning] = useState(false);
 
-  if (!mode) return <ModeSelect onSelect={setMode} />;
+  const handleSelect = (m: "performance" | "lite") => {
+    setMode(m);
+    setTransitioning(true);
+  };
+
+  if (transitioning) return <GlitchStar onDone={() => setTransitioning(false)} />;
+  if (!mode) return <ModeSelect onSelect={handleSelect} />;
   return <MainPage mode={mode} />;
 }
 
