@@ -1,0 +1,9 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "4g9j9T6gRRxxgTIEW1JxY"
+uri = "file://artifacts/nika/nika-site.zip"
+type = "unspecified"
+title = "nika-site.zip"
+description = "Production build — siap upload ke hosting mana aja (Netlify, Vercel, GitHub Pages, dll)"
