@@ -18,7 +18,6 @@ const QUOTES = [
 ];
 
 /* ───────── Social links ───────── */
-/* ───────── Social links ───────── */
 const SOCIALS = [
   {
     label: "GitHub",
@@ -172,7 +171,7 @@ function Bars({ playing }: { playing: boolean }) {
 function MusicPlayer() {
   const [playing, setPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(165); // Durasi default dalam detik (2:45)
+  const [duration, setDuration] = useState(165);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
@@ -185,7 +184,6 @@ function MusicPlayer() {
     return () => clearTimeout(t);
   }, []);
 
-  // Timer simulasi pergerakan detik saat lagu dimainkan
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (playing) {
@@ -233,7 +231,6 @@ function MusicPlayer() {
         title="audio"
       />
 
-      {/* Detail Lagu & Kontrol Play */}
       <div className="flex items-center gap-4">
         <div className="w-12 h-12 rounded-xl bg-gray-800 border border-white/10 flex-shrink-0 overflow-hidden animate-glow">
           <img
@@ -280,7 +277,6 @@ function MusicPlayer() {
         </button>
       </div>
 
-      {/* Progress Bar & Durasi Menit/Detik */}
       <div className="w-full flex flex-col gap-1 mt-1">
         <input
           type="range"
@@ -299,10 +295,10 @@ function MusicPlayer() {
   );
 }
 
-/* ───────── Glitch Star Transition ───────── */
-const GLITCH_CYCLE = 3000; // ms — one full star → dissolve cycle
+/* ───────── Glitch Star Transition (Calm -> Brutal -> Gepeng Blur Exit) ───────── */
+const GLITCH_CYCLE = 2600;
 
-function GlitchStar({
+export function GlitchStar({
   onDone,
   mode,
 }: {
@@ -315,222 +311,332 @@ function GlitchStar({
   }, [onDone]);
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 999,
-        display: "grid",
-        placeItems: "center",
-        overflow: "hidden",
-      }}
-    >
-      {/* film grain overlay */}
+    <div className="fixed inset-0 z-[999] grid place-items-center overflow-hidden bg-[#020204]">
       <style>{`
-        @keyframes gs-main{
-          0%{transform:translate3d(0,8px,0) scale(.94) rotate(-.6deg);opacity:0;filter:blur(8px) brightness(.8)}
-          8%{transform:translate3d(0,0,0) scale(1) rotate(0);opacity:1;filter:blur(0) brightness(1)}
-          30%{transform:translate3d(0,-2px,0) scale(1.015) rotate(.25deg);opacity:1;filter:blur(0) brightness(1.05)}
-          34%{transform:translate3d(-2px,1px,0) scale(1.01,.99) skewX(-1deg)}
-          36%{transform:translate3d(5px,-1px,0) scale(.99,1.015) skewX(3deg)}
-          38%{transform:translate3d(-7px,2px,0) scale(1.02,.98) skewX(-4deg)}
-          40%{transform:translate3d(3px,-1px,0) scale(.995,1.01) skewX(2deg)}
-          42%{transform:translate3d(-4px,0,0) scale(1.015,.985) skewX(-2deg)}
-          44%{transform:translate3d(2px,1px,0) scale(1.005,.995)}
-          47%{transform:translate3d(0,0,0) scale(1)}
-          53%{transform:translate3d(0,0,0) scaleX(1.08) scaleY(.92);filter:blur(.1px) brightness(1.2)}
-          61%{transform:translate3d(0,0,0) scaleX(1.8) scaleY(.34);filter:blur(.25px) brightness(1.55)}
-          69%{transform:translate3d(0,0,0) scaleX(2.7) scaleY(.075);filter:blur(.7px) brightness(2.1)}
-          76%{transform:translate3d(0,0,0) scaleX(3.35) scaleY(.018);opacity:.9;filter:blur(1.8px) brightness(2.7)}
-          84%{transform:translate3d(0,0,0) scaleX(4.15) scaleY(.006);opacity:.38;filter:blur(4px) brightness(2)}
-          92%,100%{transform:translate3d(0,0,0) scaleX(4.8) scaleY(.002);opacity:0;filter:blur(8px) brightness(1.4)}
+        @keyframes star-sequence {
+          /* Phase 1: Calm Entrance (0% - 20%) */
+          0% {
+            transform: scale(0.6) rotate(0deg);
+            opacity: 0;
+            filter: blur(8px);
+          }
+          10% {
+            transform: scale(0.9) rotate(0deg);
+            opacity: 1;
+            filter: blur(0px);
+          }
+          20% {
+            transform: scale(1) rotate(0deg);
+            opacity: 1;
+            filter: blur(0px);
+          }
+
+          /* Phase 2: UNHINGED BRUTAL GLITCH (20% - 75%) */
+          22% { transform: translate(-45px, 25px) scale(1.4) skewX(-45deg); filter: invert(0.8) contrast(300%); }
+          25% { transform: translate(50px, -30px) scale(0.6) rotate(15deg); }
+          28% { transform: translate(-55px, -20px) scale(1.5) skewY(35deg); filter: hue-rotate(90deg); }
+          31% { transform: translate(40px, 35px) scale(0.7) rotate(-20deg); }
+          34% { transform: translate(-60px, -40px) scale(1.6) skewX(50deg) invert(1); }
+          38% { transform: translate(55px, 20px) scale(0.5) rotate(25deg); }
+          42% { transform: translate(-35px, 45px) scale(1.7) skewY(-40deg); filter: contrast(400%); }
+          46% { transform: translate(45px, -35px) scale(0.6) skewX(-55deg); }
+          50% { transform: translate(-50px, -25px) scale(1.8) rotate(-35deg) invert(0.9); }
+          54% { transform: translate(60px, 30px) scale(0.5) skewY(45deg); }
+          58% { transform: translate(-40px, 40px) scale(1.5) rotate(40deg); }
+          62% { transform: translate(35px, -45px) scale(0.7) skewX(60deg); filter: invert(1); }
+          66% { transform: translate(-25px, 20px) scale(1.3); }
+          71% { transform: translate(15px, -15px) scale(0.95); }
+
+          /* Phase 3: Extreme Gepeng & Smooth Blur Exit (75% - 100%) */
+          76% {
+            transform: scaleX(3) scaleY(0.2) skewX(30deg);
+            opacity: 1;
+            filter: blur(3px) brightness(2);
+          }
+          85% {
+            transform: scaleX(8) scaleY(0.02) skewX(-45deg);
+            opacity: 0.8;
+            filter: blur(12px) brightness(2.5);
+          }
+          93% {
+            transform: scaleX(14) scaleY(0.002) skewX(60deg);
+            opacity: 0.35;
+            filter: blur(25px) brightness(3);
+          }
+          100% {
+            transform: scaleX(20) scaleY(0.0001);
+            opacity: 0;
+            filter: blur(40px) brightness(1);
+          }
         }
-        @keyframes gs-cyan{
-          0%,32%,48%,100%{opacity:0;transform:translate(0,0)}
-          34%{opacity:.55;transform:translate(-5px,1px)}
-          36%{opacity:.18;transform:translate(3px,-1px)}
-          38%{opacity:.65;transform:translate(-8px,1px)}
-          40%{opacity:.1;transform:translate(2px,0)}
-          42%{opacity:.5;transform:translate(6px,-1px)}
-          44%{opacity:.12;transform:translate(-2px,1px)}
-          46%{opacity:0;transform:translate(0,0)}
+
+        /* RGB Cyan - Jitter Super Kasar */
+        @keyframes rgb-cyan {
+          0%, 19%, 76%, 100% { transform: translate(0, 0); opacity: 0; }
+          22% { transform: translate(-50px, 30px) scaleX(1.4); opacity: 1; }
+          32% { transform: translate(55px, -35px) scaleY(0.5); opacity: 0.95; }
+          42% { transform: translate(-60px, -20px) skewX(45deg); opacity: 1; }
+          52% { transform: translate(48px, 40px); opacity: 0.9; }
+          62% { transform: translate(-40px, -30px) scaleX(1.6); opacity: 1; }
         }
-        @keyframes gs-pink{
-          0%,32%,48%,100%{opacity:0;transform:translate(0,0)}
-          34%{opacity:.5;transform:translate(5px,-1px)}
-          36%{opacity:.15;transform:translate(-3px,1px)}
-          38%{opacity:.6;transform:translate(8px,-1px)}
-          40%{opacity:.08;transform:translate(-2px,0)}
-          42%{opacity:.48;transform:translate(-6px,1px)}
-          44%{opacity:.1;transform:translate(2px,-1px)}
-          46%{opacity:0;transform:translate(0,0)}
+
+        /* RGB Magenta - Jitter Super Kasar */
+        @keyframes rgb-magenta {
+          0%, 19%, 76%, 100% { transform: translate(0, 0); opacity: 0; }
+          24% { transform: translate(52px, -25px) scaleY(1.5); opacity: 1; }
+          34% { transform: translate(-58px, 30px) skewY(-35deg); opacity: 0.95; }
+          44% { transform: translate(65px, 18px); opacity: 1; }
+          54% { transform: translate(-45px, -45px) scaleX(0.5); opacity: 0.9; }
+          64% { transform: translate(50px, 35px); opacity: 1; }
         }
-        @keyframes gs-beam{
-          0%,57%{width:0;opacity:0}
-          67%{width:42%;opacity:.25}
-          76%{width:76%;opacity:.9}
-          84%{width:92%;opacity:.3}
-          94%,100%{width:108%;opacity:0}
+
+        /* RGB Yellow - Lapisan RGB Ketiga Biar Makin Brutal */
+        @keyframes rgb-yellow {
+          0%, 19%, 76%, 100% { transform: translate(0, 0); opacity: 0; }
+          26% { transform: translate(-30px, -40px) scale(1.3); opacity: 0.8; }
+          36% { transform: translate(40px, 45px) skewX(-30deg); opacity: 0.85; }
+          48% { transform: translate(-50px, 25px); opacity: 0.9; }
+          60% { transform: translate(35px, -35px) scaleY(1.4); opacity: 0.8; }
         }
-        @keyframes gs-caption{
-          0%,10%{opacity:0;transform:translateY(8px)}
-          18%,46%{opacity:1;transform:translateY(0)}
-          60%,100%{opacity:0;transform:translateY(-5px)}
+
+        /* Extreme Slice Slicing */
+        @keyframes slice-tear-1 {
+          0%, 19%, 76%, 100% { clip-path: inset(0 0 0 0); opacity: 0; }
+          23% { clip-path: inset(5% 0 80% 0); transform: translateX(-80px); opacity: 1; }
+          37% { clip-path: inset(70% 0 5% 0); transform: translateX(85px); opacity: 1; }
+          51% { clip-path: inset(20% 0 50% 0); transform: translateX(-90px); opacity: 1; }
+          65% { clip-path: inset(40% 0 20% 0); transform: translateX(75px); opacity: 1; }
         }
-        @keyframes gs-noise{
-          0%{transform:translate(0,0)}
-          25%{transform:translate(-1%,1%)}
-          50%{transform:translate(1%,-1%)}
-          75%{transform:translate(1%,1%)}
-          100%{transform:translate(0,0)}
+
+        @keyframes slice-tear-2 {
+          0%, 19%, 76%, 100% { clip-path: inset(0 0 0 0); opacity: 0; }
+          27% { clip-path: inset(85% 0 2% 0); transform: translateX(90px); opacity: 1; }
+          41% { clip-path: inset(10% 0 60% 0); transform: translateX(-95px); opacity: 1; }
+          55% { clip-path: inset(50% 0 30% 0); transform: translateX(80px); opacity: 1; }
+          69% { clip-path: inset(30% 0 40% 0); transform: translateX(-70px); opacity: 1; }
         }
-        .gs-shell{
-          width:clamp(140px,24vw,280px);
-          aspect-ratio:1;
-          position:relative;
-          transform-origin:center;
-          will-change:transform,opacity,filter;
-          animation:gs-main ${GLITCH_CYCLE}ms forwards;
+
+        /* Strobe Background Glitch */
+        @keyframes bg-strobe {
+          0%, 19%, 76%, 100% { opacity: 0; }
+          22% { opacity: 0.8; background-color: #ff0055; }
+          30% { opacity: 0.85; background-color: #00f0ff; }
+          38% { opacity: 0.95; background-color: #ffffff; }
+          48% { opacity: 0.8; background-color: #ffe600; }
+          58% { opacity: 0.9; background-color: #ff0055; }
+          68% { opacity: 0.7; background-color: #00f0ff; }
         }
-        .gs-star,.gs-ghost{
-          position:absolute;inset:0;
-          clip-path:polygon(50% 0%,58% 38%,100% 50%,58% 62%,50% 100%,42% 62%,0% 50%,42% 38%);
+
+        .star-main-container {
+          animation: star-sequence ${GLITCH_CYCLE}ms cubic-bezier(0.1, 0.95, 0.1, 1) forwards;
         }
-        .gs-star{
-          background:white;
-          filter:drop-shadow(0 0 12px rgba(255,255,255,.65)) drop-shadow(0 0 42px rgba(255,255,255,.22));
+
+        .cyan-ghost {
+          animation: rgb-cyan ${GLITCH_CYCLE}ms linear infinite;
+          mix-blend-mode: screen;
         }
-        .gs-ghost{opacity:0;mix-blend-mode:screen}
-        .gs-cyan{background:#37e9ff;animation:gs-cyan ${GLITCH_CYCLE}ms forwards}
-        .gs-pink{background:#ff3da6;animation:gs-pink ${GLITCH_CYCLE}ms forwards}
-        .gs-beam{
-          position:absolute;left:50%;top:50%;
-          width:0;height:2px;
-          transform:translate(-50%,-50%);
-          background:linear-gradient(90deg,transparent,white 40%,white 60%,transparent);
-          box-shadow:0 0 10px white,0 0 30px #78eaff;
-          opacity:0;
-          animation:gs-beam ${GLITCH_CYCLE}ms cubic-bezier(.22,.7,.2,1) forwards;
+
+        .magenta-ghost {
+          animation: rgb-magenta ${GLITCH_CYCLE}ms linear infinite;
+          mix-blend-mode: screen;
         }
-        .gs-caption{
-          position:absolute;bottom:8%;
-          letter-spacing:.28em;text-transform:uppercase;
-          font-size:10px;font-family:monospace;
-          color:rgba(255,255,255,.4);
-          animation:gs-caption ${GLITCH_CYCLE}ms ease-in-out forwards;
+
+        .yellow-ghost {
+          animation: rgb-yellow ${GLITCH_CYCLE}ms linear infinite;
+          mix-blend-mode: screen;
         }
-        .gs-noise{
-          position:absolute;inset:0;pointer-events:none;opacity:.045;
-          background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-          animation:gs-noise .35s steps(2) infinite;
+
+        .slice-layer-1 {
+          animation: slice-tear-1 ${GLITCH_CYCLE}ms linear infinite;
+        }
+
+        .slice-layer-2 {
+          animation: slice-tear-2 ${GLITCH_CYCLE}ms linear infinite;
+        }
+
+        .strobe-bg {
+          animation: bg-strobe ${GLITCH_CYCLE}ms linear infinite;
         }
       `}</style>
 
-      {/* blurred gif background (performance only) */}
+      {/* Strobe Layer */}
+      <div className="strobe-bg absolute inset-0 pointer-events-none mix-blend-overlay" />
+
+      {/* Background Video */}
       {mode === "performance" && (
         <video
           autoPlay
           muted
           loop
           playsInline
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            filter: "blur(18px) brightness(1.35)",
-            transform: "scale(1.05)",
-          }}
+          className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-25 mix-blend-difference"
           src="/bg.webm"
         />
       )}
-      {/* radial vignette on top of gif */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background:
-            "radial-gradient(circle at center,rgba(5,5,7,.45),rgba(5,5,7,.82) 70%)",
-        }}
-      />
 
-      <div className="gs-noise" />
-
-      {/* stage */}
-      <div
-        style={{
-          width: "min(90vw,700px)",
-          height: "min(80vh,620px)",
-          display: "grid",
-          placeItems: "center",
-          position: "relative",
-        }}
-      >
-        <div className="gs-shell">
-          <div className="gs-ghost gs-cyan" />
-          <div className="gs-ghost gs-pink" />
-          <div className="gs-star" />
+      {/* Ukuran Diperkecil & Dibuat Sleek: w-44 h-44 (Desktop: w-56 h-56) */}
+      <div className="star-main-container relative w-44 h-44 sm:w-56 sm:h-56 flex items-center justify-center">
+        {/* Yellow Shift */}
+        <div className="yellow-ghost absolute inset-0 text-[#ffe600]">
+          <StarSvg />
         </div>
-        <div className="gs-beam" />
-        <div className="gs-caption">loading identity</div>
+
+        {/* Cyan Shift */}
+        <div className="cyan-ghost absolute inset-0 text-[#00f0ff]">
+          <StarSvg />
+        </div>
+
+        {/* Magenta Shift */}
+        <div className="magenta-ghost absolute inset-0 text-[#ff0055]">
+          <StarSvg />
+        </div>
+
+        {/* Slice Layer 1 */}
+        <div className="slice-layer-1 absolute inset-0 text-white drop-shadow-[0_0_30px_rgba(255,255,255,1)]">
+          <StarSvg />
+        </div>
+
+        {/* Slice Layer 2 */}
+        <div className="slice-layer-2 absolute inset-0 text-cyan-300 drop-shadow-[0_0_30px_rgba(0,240,255,1)]">
+          <StarSvg />
+        </div>
+
+        {/* Center Base Star */}
+        <div className="relative w-full h-full text-white">
+          <StarSvg />
+        </div>
+      </div>
+
+      {/* Sub-Text */}
+      <div className="absolute bottom-12 font-mono text-[10px] font-bold tracking-[0.6em] text-cyan-400 uppercase opacity-75">
+        [ SYSTEM OVERRIDE ]
       </div>
     </div>
   );
 }
 
-/* ───────── Mode Select (Loading) Screen ───────── */
+/* ───────── Sleek & Sharp Realistic Star SVG ───────── */
+function StarSvg() {
+  return (
+    <svg viewBox="0 0 200 200" className="w-full h-full">
+      <circle
+        cx="100"
+        cy="100"
+        r="70"
+        fill="currentColor"
+        className="opacity-20 blur-lg"
+      />
+      <ellipse
+        cx="100"
+        cy="100"
+        rx="95"
+        ry="3"
+        fill="currentColor"
+        className="opacity-80"
+      />
+      <ellipse
+        cx="100"
+        cy="100"
+        rx="3"
+        ry="95"
+        fill="currentColor"
+        className="opacity-80"
+      />
+      <ellipse
+        cx="100"
+        cy="100"
+        rx="55"
+        ry="1.8"
+        fill="currentColor"
+        className="opacity-60"
+        transform="rotate(45 100 100)"
+      />
+      <ellipse
+        cx="100"
+        cy="100"
+        rx="55"
+        ry="1.8"
+        fill="currentColor"
+        className="opacity-60"
+        transform="rotate(-45 100 100)"
+      />
+      <path
+        d="M 100,22 C 100,75 125,100 178,100 C 125,100 100,125 100,178 C 100,125 75,100 22,100 C 75,100 100,75 100,22 Z"
+        fill="#ffffff"
+      />
+      <circle cx="100" cy="100" r="5" fill="#ffffff" />
+    </svg>
+  );
+}
+
+/* ───────── Mode Select / Welcome Screen (Enhanced) ───────── */
 function ModeSelect({
   onSelect,
 }: {
   onSelect: (mode: "performance" | "lite") => void;
 }) {
   return (
-    <div
-      className="bg-black min-h-screen w-full flex items-center justify-center"
-      style={{
-        backgroundImage:
-          "radial-gradient(ellipse at 50% 80%, rgba(255,255,255,0.03) 0%, transparent 60%)",
-      }}
-    >
+    <div className="relative bg-[#08080c] min-h-screen w-full flex items-center justify-center overflow-hidden">
+      {/* 1. Subtle Cyber Grid Overlay */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-15"
+        style={{
+          backgroundImage: `radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px)`,
+          backgroundSize: '24px 24px'
+        }}
+      />
+
+      {/* 2. Ambient Colored Glows */}
+      <div className="absolute -top-20 -left-20 w-80 h-80 bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-cyan-500/20 rounded-full blur-[120px] pointer-events-none" />
+
+      {/* 3. Decorative Corner Text */}
+      <div className="absolute top-6 left-6 font-mono text-[10px] text-gray-500 tracking-widest hidden sm:block">
+        JUST A PERSON
+      </div>
+      <div className="absolute bottom-6 right-6 font-mono text-[10px] text-gray-500 tracking-widest hidden sm:block">
+        EMO4LYFE
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="text-center px-8 w-full max-w-lg"
+        className="relative z-10 text-center px-8 w-full max-w-lg"
       >
-        <p className="font-mono text-white text-lg tracking-[0.3em] mb-4 opacity-90">
-          [ CHOOSE MODE ]
+        <p className="font-mono text-cyan-400 text-xs tracking-[0.4em] uppercase mb-2">
+          [ WELCOME ]
         </p>
-        <p className="font-mono text-gray-400 text-sm leading-relaxed mb-12 max-w-sm mx-auto text-center">
-          This website may experience lag or some effects may not be fully
-          supported on your device. Because of that, I've provided 2 mode
-          options to keep the experience enjoyable.
+
+        <p className="font-mono text-xs text-gray-300 leading-relaxed max-w-xs mx-auto mb-6 opacity-80">
+          Welcome to Nika's digital sanctuary — a personal space for links, music, and quiet thoughts.
         </p>
-        <div className="flex gap-4 justify-center">
+
+        {/* 4. Mini Badges / Tags */}
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
+          {["Designer", "Gamer", "Editor", "Music"].map((tag) => (
+            <span
+              key={tag}
+              className="font-mono text-[10px] px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400"
+            >
+              #{tag}
+            </span>
+          ))}
+        </div>
+
+        <div className="flex justify-center">
           <motion.button
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
             onClick={() => onSelect("performance")}
-            className="flex flex-col items-center gap-1 px-7 py-3.5 rounded-2xl border border-white/15 bg-white/6 cursor-pointer transition-all hover:bg-white/12 hover:border-white/30 min-w-[88px]"
+            className="group relative flex flex-col items-center gap-1 px-10 py-4 rounded-2xl border border-white/15 bg-white/5 backdrop-blur-md cursor-pointer transition-all hover:bg-white/10 hover:border-cyan-500/50 min-w-[220px]"
           >
-            <span className="font-mono text-lg font-semibold text-white">
-              Performance
+            <span className="font-mono text-xl font-bold text-white group-hover:text-cyan-300 transition-colors">
+              ENTER
             </span>
-            <span className="font-mono text-sm text-gray-400">
-              full visuals (recommended)
+            <span className="font-mono text-[11px] text-gray-400">
+              Continue To Profile Nika
             </span>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => onSelect("lite")}
-            className="flex flex-col items-center gap-1 px-7 py-3.5 rounded-2xl border border-white/15 bg-white/6 cursor-pointer transition-all hover:bg-white/12 hover:border-white/30 min-w-[140px]"
-          >
-            <span className="font-mono text-lg font-semibold text-white">
-              Lite
-            </span>
-            <span className="font-mono text-sm text-gray-400">smoother</span>
           </motion.button>
         </div>
       </motion.div>
@@ -552,7 +658,7 @@ const content = {
   },
 };
 
-/* ───────── Idle status (Dipindah ke atas MainPage) ───────── */
+/* ───────── Idle status ───────── */
 function useIdleStatus(idleMs = 5500) {
   const [idle, setIdle] = useState(false);
 
@@ -592,7 +698,6 @@ function MainPage({ mode }: { mode: "performance" | "lite" }) {
 
   return (
     <div className="relative min-h-screen bg-[#0a0a0f]">
-      {/* 2. Pasang efek stardust di sini */}
       <StardustBackground />
 
       {isPerf && (
@@ -605,17 +710,14 @@ function MainPage({ mode }: { mode: "performance" | "lite" }) {
           src="/bg.webm"
         />
       )}
-      {/* dark overlay */}
       <div className="fixed inset-0 bg-gradient-to-b from-black/45 via-black/55 to-black/75 z-[1]" />
 
-      {/* content */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
         className="relative z-10 flex flex-col items-center justify-center min-h-screen py-12 px-4"
       >
-        {/* Avatar */}
         <motion.div
           initial={{ scale: 0.85, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -629,7 +731,6 @@ function MainPage({ mode }: { mode: "performance" | "lite" }) {
           />
         </motion.div>
 
-        {/* Refresh button */}
         <button
           onClick={() => window.location.reload()}
           className="fixed top-5 right-5 z-50 p-2.5 rounded-full bg-black/40 hover:bg-black/60 border border-white/10 text-white/70 hover:text-white transition-all backdrop-blur-md cursor-pointer"
@@ -640,7 +741,6 @@ function MainPage({ mode }: { mode: "performance" | "lite" }) {
           </svg>
         </button>
 
-        {/* Name with Glitch Effect */}
         <motion.h1
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -651,7 +751,6 @@ function MainPage({ mode }: { mode: "performance" | "lite" }) {
           Nika
         </motion.h1>
 
-        {/* Bio */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -661,7 +760,6 @@ function MainPage({ mode }: { mode: "performance" | "lite" }) {
           {content[lang].bio}
         </motion.p>
 
-        {/* Clock */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -671,7 +769,6 @@ function MainPage({ mode }: { mode: "performance" | "lite" }) {
           <Clock lang={lang} />
         </motion.div>
 
-        {/* Typewriter quotes */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -681,7 +778,6 @@ function MainPage({ mode }: { mode: "performance" | "lite" }) {
           <Typewriter />
         </motion.div>
 
-        {/* Status pill */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -696,7 +792,6 @@ function MainPage({ mode }: { mode: "performance" | "lite" }) {
           </span>
         </motion.div>
 
-        {/* Music player */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -706,7 +801,6 @@ function MainPage({ mode }: { mode: "performance" | "lite" }) {
           <MusicPlayer />
         </motion.div>
 
-        {/* Social links */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -729,7 +823,6 @@ function MainPage({ mode }: { mode: "performance" | "lite" }) {
           ))}
         </motion.div>
 
-        {/* Tombol Language Switcher */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -752,6 +845,7 @@ function MainPage({ mode }: { mode: "performance" | "lite" }) {
     </div>
   );
 }
+
 /* ───────── Root ───────── */
 function Home() {
   const [mode, setMode] = useState<null | "performance" | "lite">(null);

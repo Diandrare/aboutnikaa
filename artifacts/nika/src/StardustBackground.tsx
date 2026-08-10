@@ -39,9 +39,9 @@ export default function StardustBackground() {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        size: Math.random() * 1.8 + 0.4,
+        size: Math.random() * 2 + 1,
         speedX: (Math.random() - 0.5) * 0.2,
-        speedY: (Math.random() - 0.5) * 0.2 - 0.1, // cenderung melayang perlahan ke atas
+        speedY: (Math.random() - 10) * 0.2 - 0.1, // cenderung melayang perlahan ke atas
         opacity: Math.random(),
         maxOpacity: Math.random() * 0.7 + 0.3,
         fadeSpeed: Math.random() * 0.01 + 0.003,

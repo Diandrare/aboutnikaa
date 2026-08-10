@@ -18,7 +18,7 @@ export default function StarCursor() {
       setIsMobile(
         "ontouchstart" in window ||
           navigator.maxTouchPoints > 0 ||
-          window.matchMedia("(max-width: 768px)").matches
+          window.matchMedia("(max-width: 768px)").matches,
       );
     };
 
@@ -27,10 +27,11 @@ export default function StarCursor() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // 2. Event Mouse Move
+  // 2. Event Mouse Move (Hanya aktif di Desktop)
   useEffect(() => {
-    let count = 0;
+    if (isMobile) return;
 
+    let count = 0;
     const handleMouseMove = (e: MouseEvent) => {
       const x = e.clientX;
       const y = e.clientY;
@@ -50,7 +51,7 @@ export default function StarCursor() {
 
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [isMobile]);
 
   // 3. Hapus Trail Bertahap
   useEffect(() => {
@@ -61,26 +62,26 @@ export default function StarCursor() {
     return () => clearTimeout(timer);
   }, [trail]);
 
-  // Guard Clause: Jangan render jika mobile / mouse belum bergerak
+  // Guard Clause: Matikan total jika mobile atau mouse belum bergerak
   if (isMobile || !pos) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[999999] overflow-hidden">
-      {/* ── 1. Cahaya / Glow Effect ── */}
+      {/* Glow Effect */}
       <div
         className="fixed rounded-full -translate-x-1/2 -translate-y-1/2 transition-transform duration-75 ease-out pointer-events-none"
         style={{
           left: `${pos.x}px`,
           top: `${pos.y}px`,
-          width: "500px",
-          height: "500px",
+          width: "300px",
+          height: "300px",
           background:
             "radial-gradient(circle, rgba(255,255,255,0.6) 0%, rgba(120,234,255,0.3) 10%, transparent 70%)",
           filter: "blur(10px)",
         }}
       />
 
-      {/* ── 2. Trail Bintang ── */}
+      {/* Trail Bintang */}
       {trail.map((pt) => (
         <div
           key={pt.id}
@@ -103,7 +104,7 @@ export default function StarCursor() {
         </div>
       ))}
 
-      {/* ── 3. Bintang Cursor Utama ── */}
+      {/* Bintang Cursor Utama */}
       <div
         className="fixed -translate-x-1/2 -translate-y-1/2 pointer-events-none"
         style={{
