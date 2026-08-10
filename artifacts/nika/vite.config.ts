@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 // Gunakan PORT dari environment jika ada, jika tidak ada (seperti di Vercel), gunakan default 5000
-const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 5000;
 
 export default defineConfig({
   plugins: [react()],
